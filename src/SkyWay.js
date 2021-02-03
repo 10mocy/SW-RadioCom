@@ -37,7 +37,6 @@ const SkyWay = () => {
   const joinRoom = async (room) => {
     console.log('joinRoom');
     const localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
       audio: true,
     });
 
