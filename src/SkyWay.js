@@ -6,6 +6,7 @@ const SkyWay = () => {
   const [roomName, setRoomName] = useState('');
   const [connection, setConnection] = useState();
   const [joinedRoom, setJoinedRoom] = useState('');
+  const [userCount, setUserCount] = useState(0);
 
   // const localAudioRef = useRef();
   const remoteAudioRef = useRef();
@@ -23,12 +24,26 @@ const SkyWay = () => {
 
     connection.on('open', () => {
       console.log('open');
-      console.log();
+      setUserCount(connection.members.length);
+    });
+
+    connection.on('leave', () => {
+      setUserCount(connection.members.length);
     });
 
     connection.on('stream', (stream) => {
       console.log(stream);
       remoteAudioRef.current.srcObject = stream;
+    });
+
+    connection.on('peerJoin', () => {
+      console.log(connection.members.length);
+      setUserCount(connection.members.length);
+    });
+
+    connection.on('peerLeave', () => {
+      console.log(connection.members.length);
+      setUserCount(connection.members.length);
     });
 
     return () => connection.close();
@@ -47,17 +62,20 @@ const SkyWay = () => {
       return;
     }
 
-    console.log(localStream);
-
     const con = peer.joinRoom(room, {
       mode: 'sfu',
       stream: localStream,
     });
 
-    console.log(con);
-
     setConnection(con);
     setJoinedRoom(roomName);
+  };
+
+  const leaveRoom = () => {
+    if (!connection) return;
+    connection.close();
+
+    setJoinedRoom('');
   };
 
   return (
@@ -67,6 +85,8 @@ const SkyWay = () => {
           SkyWay接続状態 : {peer && peer.open ? '接続済み' : '未接続'}
           <br />
           接続ルーム : {joinedRoom ? joinedRoom : '接続していません'}
+          <br />
+          接続人数 : {userCount !== 0 ? userCount + 1 : 0}人
         </p>
       </div>
       <div>
@@ -78,6 +98,7 @@ const SkyWay = () => {
       </div>
       <div>
         <button onClick={() => joinRoom(roomName)}>join</button>
+        <button onClick={() => leaveRoom()}>leave</button>
       </div>
       <div>
         {/* <audio ref={localAudioRef} autoPlay controls /> */}
