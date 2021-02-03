@@ -7,8 +7,8 @@ const SkyWay = () => {
   const [connection, setConnection] = useState();
   const [joinedRoom, setJoinedRoom] = useState('');
 
-  const localVideoRef = useRef();
-  const remoteVideoRef = useRef();
+  // const localAudioRef = useRef();
+  const remoteAudioRef = useRef();
 
   useEffect(() => {
     const peer = new skyway({
@@ -28,7 +28,7 @@ const SkyWay = () => {
 
     connection.on('stream', (stream) => {
       console.log(stream);
-      remoteVideoRef.current.srcObject = stream;
+      remoteAudioRef.current.srcObject = stream;
     });
 
     return () => connection.close();
@@ -41,7 +41,7 @@ const SkyWay = () => {
       audio: true,
     });
 
-    localVideoRef.current.srcObject = localStream;
+    // localAudioRef.current.srcObject = localStream;
 
     if (!peer || room === '') {
       console.log('not ready');
@@ -81,8 +81,8 @@ const SkyWay = () => {
         <button onClick={() => joinRoom(roomName)}>join</button>
       </div>
       <div>
-        <video ref={localVideoRef} autoPlay muted controls />
-        <video ref={remoteVideoRef} autoPlay muted controls />
+        {/* <audio ref={localAudioRef} autoPlay controls /> */}
+        <audio ref={remoteAudioRef} autoPlay controls />
       </div>
     </div>
   );
