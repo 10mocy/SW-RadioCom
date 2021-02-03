@@ -86,7 +86,7 @@ const SkyWay = () => {
           <br />
           接続ルーム : {joinedRoom ? joinedRoom : '接続していません'}
           <br />
-          接続人数 : {userCount !== 0 ? userCount + 1 : 0}人
+          接続人数 : {joinedRoom ? userCount + 1 : 0}人
         </p>
       </div>
       <div>
