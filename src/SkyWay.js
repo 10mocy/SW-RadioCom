@@ -7,6 +7,7 @@ const SkyWay = () => {
   const [connection, setConnection] = useState();
   const [joinedRoom, setJoinedRoom] = useState('');
   const [userCount, setUserCount] = useState(0);
+  const [audioStream, setAudioStream] = useState();
 
   // const localAudioRef = useRef();
   const remoteAudioRef = useRef();
@@ -31,9 +32,19 @@ const SkyWay = () => {
       setUserCount(connection.members.length);
     });
 
-    connection.on('stream', (stream) => {
-      console.log(stream);
-      remoteAudioRef.current.srcObject = stream;
+    connection.on('stream', () => {
+      console.log(connection.remoteStreams);
+
+      const audioContext = new AudioContext();
+      const outputNode = audioContext.createMediaStreamDestination();
+
+      remoteAudioRef.current.srcObject = Object.keys(
+        connection.remoteStreams
+      ).reduce((acc, key) => {
+        return audioContext
+          .createMediaStreamSource(connection.remoteStreams[key])
+          .connect(acc);
+      }, outputNode);
     });
 
     connection.on('peerJoin', () => {
